@@ -24,6 +24,13 @@
 #define CW			1
 #define CCW			0
 
+class MotorException{
+public:
+	MotorException(int theID, int theStatus) : ID(theID), status(theStatus){};
+	int ID;
+	int status;
+};
+
 class Motor{
 public:
 	Motor(int, int);
@@ -36,6 +43,7 @@ public:
 	void setRotateDirection(int);
 	void printErrorCode(void);
 	void checkStatus();
+	int ping();
 private:
 	int position;
 	int speed;
@@ -45,5 +53,5 @@ private:
 	int rotateDirection;
 };
 
-void pingTest();
+void pingAll();
 

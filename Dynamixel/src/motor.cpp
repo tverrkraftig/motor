@@ -6,6 +6,7 @@ Motor::Motor(int theID, int theMode){
 	ID = theID;
 	mode = theMode;
 	setMode(mode);
+	commStatus = COMM_RXSUCCESS;
 	//dxl_write_word( ID, MAX_TORQUE_L, 1023 );
 	/*commStatus = dxl_get_result();
 	if(commStatus != COMM_RXSUCCESS)
@@ -18,53 +19,60 @@ int Motor::getMode(){
 }
 
 int Motor::getPosition(){
+	//if motor unreachable
+	if(commStatus != COMM_RXSUCCESS)
+		return -1;
+		
 	int temp = dxl_read_word( ID, PRESENT_POSITION_L );
 	commStatus = dxl_get_result();
 	if(commStatus != COMM_RXSUCCESS)
-		throw commStatus;
+		throw MotorException(ID,commStatus);
 	printErrorCode();
 	position = temp;
 	return position;
 }
 
 int Motor::getSpeed(){
+	//if motor unreachable
+	if(commStatus != COMM_RXSUCCESS)
+		return -1;
+		
 	unsigned short temp = dxl_read_word( ID, PRESENT_SPEED_L );
 	commStatus = dxl_get_result();
 	if(commStatus != COMM_RXSUCCESS)
-		throw commStatus;
+		throw MotorException(ID,commStatus);
 	printErrorCode();
 	speed = temp & 1023;
 	return speed;
 }
 
 void Motor::setGoalPosition(int thePosition){
+	//if motor unreachable
+	if(commStatus != COMM_RXSUCCESS)
+		return;
+		
 	dxl_write_word( ID, GOAL_POSITION_L, thePosition );
 	commStatus = dxl_get_result();
 	if(commStatus != COMM_RXSUCCESS)
-		throw commStatus;
+		throw MotorException(ID,commStatus);
 	printErrorCode();
 }
 
 
 void Motor::setMode(int theMode){
-	
+	//if motor unreachable
+	if(commStatus != COMM_RXSUCCESS)
+		return;
+		
 	switch(theMode)
 	{
 	case WHEELMODE:
 		dxl_write_word( ID, CW_ANGLE_LIMIT_L, 0 );
 		dxl_write_word( ID, CCW_ANGLE_LIMIT_L, 0 );
-		/*commStatus = dxl_get_result();
-		if(commStatus != COMM_RXSUCCESS)
-			throw commStatus;
-		printErrorCode();*/
 		break;
 	case SERVOMODE:
 		dxl_write_word( ID, CW_ANGLE_LIMIT_L, 0 );
 		dxl_write_word( ID, CCW_ANGLE_LIMIT_L, 1023 );
-		/*commStatus = dxl_get_result();
-		if(commStatus != COMM_RXSUCCESS)
-			throw commStatus;
-		printErrorCode();*/
 		break;
 	default:
 		printf("unknown mode: %d\n", theMode);
@@ -74,15 +82,22 @@ void Motor::setMode(int theMode){
 }
 
 void Motor::setSpeed(int theSpeed, bool theDirection){
+	//if motor unreachable
+	if(commStatus != COMM_RXSUCCESS)
+		return;
+		
 	dxl_write_word( ID, MOVING_SPEED_L, theSpeed | (theDirection<<10) );
 	commStatus = dxl_get_result();
 	if(commStatus != COMM_RXSUCCESS)
-		throw commStatus;
+		throw MotorException(ID,commStatus);
 	printErrorCode();
 }
 
 void Motor::setRotateDirection(int direction){
-	
+	//if motor unreachable
+	if(commStatus != COMM_RXSUCCESS)
+		return;
+		
 	switch(direction)
 	{
 	case CW:
@@ -97,7 +112,7 @@ void Motor::setRotateDirection(int direction){
 	}
 	commStatus = dxl_get_result();
 	if(commStatus != COMM_RXSUCCESS)
-		throw commStatus;
+		throw MotorException(ID,commStatus);
 	printErrorCode();
 	
 	rotateDirection = direction;
@@ -130,6 +145,10 @@ void Motor::printErrorCode()
 
 void Motor::checkStatus()
 {
+	//if motor unreachable
+	if(commStatus != COMM_RXSUCCESS)
+		return;
+		
 	unsigned char temp;
 	for(int i = 0; i<50; i++)
 	{
@@ -141,7 +160,18 @@ void Motor::checkStatus()
 	printf("\n");
 }
 
-void pingTest(){
+int Motor::ping(){
+	dxl_ping(ID);
+	commStatus = dxl_get_result();
+	if( commStatus == COMM_RXSUCCESS )
+	{
+		printf("ID: %d active!\n",ID);
+		return 1;
+	}
+	return 0;
+}
+
+void pingAll(){
 	for(int i = 0; i<254; i++){
 		dxl_ping(i);
 		if( dxl_get_result( ) == COMM_RXSUCCESS )

@@ -7,7 +7,7 @@ TARGET := dynamixel
 
 LIBDIRS		= -L lib
 INCLUDEDIRS	= -I include
-LDFLAGS		= $(LIBDIRS) -lm -ldxl
+LDFLAGS		= $(LIBDIRS) -lm -ldxl -lpthread -lcurl -ljansson
 
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
