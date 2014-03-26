@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 #include "car.h"
+#include "manipulator.h"
+#include "interface.h"
 
 using namespace std;
 
@@ -42,35 +44,71 @@ int main(){
 	else
 		printf( "Succeed to open USB2Dynamixel!\n" );
 
+	windowInit();
+	
 	Car car1(FRONT_RIGHT_WHEEL, FRONT_LEFT_WHEEL, BACK_RIGHT_WHEEL, BACK_LEFT_WHEEL);
+	Manipulator manipulator1(MAN_ONE, MAN_TWO, MAN_THREE, MAN_FOUR);
+	
+	
 	//pthread_create( &thread1, NULL, interface, (void*) car1 );
 	
 		while(1)
 		{
 			try{
-				while(commands.empty())
-				{
-//					commands = getCommands();
-				}
-				while(!commands.empty())
-				{
-					command = commands.front();
-					commands.erase(commands.begin());
-					if(command == "forward")
-						car1.setSpeed(1023,1);
-					if(command == "backward")
-						car1.setSpeed(1023,0);
-					if(command == "stop")
-						car1.setSpeed(0,1);
-					if(command == "leftTurn")
-						car1.turnCar(LEFT_TURN);
-					if(command == "rightTurn")
-						car1.turnCar(RIGHT_TURN);
-					if(command == "noTurn")
-						car1.turnCar(NO_TURN);
-					
-					printf("command: %s\n", command.c_str());
-				}
+
+				checkEvent(manipulator1);
+				
+//				for(int i = 0; i < 130; i+=10)
+//				{
+//					manipulator1.goToPosition(0,100,i);
+//					usleep(50000);
+//				}
+//				for(int i = 130; i > 0; i-=10)
+//				{
+//					manipulator1.goToPosition(0,100,i);
+//					usleep(50000);
+//				}
+//				
+//				for(int i = 0; i < 100; i+=10)
+//				{
+//					manipulator1.goToPosition(i,100,0);
+//					usleep(50000);
+//				}
+//				for(int i = 100; i > -100; i-=10)
+//				{
+//					manipulator1.goToPosition(i,100,0);
+//					usleep(50000);
+//				}
+//				for(int i = -100; i < 0; i+=10)
+//				{
+//					manipulator1.goToPosition(i,100,0);
+//					usleep(50000);
+//				}
+
+				
+//				while(commands.empty())
+//				{
+////					commands = getCommands();
+//				}
+//				while(!commands.empty())
+//				{
+//					command = commands.front();
+//					commands.erase(commands.begin());
+//					if(command == "forward")
+//						car1.setSpeed(1023,1);
+//					if(command == "backward")
+//						car1.setSpeed(1023,0);
+//					if(command == "stop")
+//						car1.setSpeed(0,1);
+//					if(command == "leftTurn")
+//						car1.turnCar(LEFT_TURN);
+//					if(command == "rightTurn")
+//						car1.turnCar(RIGHT_TURN);
+//					if(command == "noTurn")
+//						car1.turnCar(NO_TURN);
+//					
+//					printf("command: %s\n", command.c_str());
+//				}
 			}
 
 			catch(MotorException e) {

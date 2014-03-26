@@ -1,6 +1,9 @@
+#ifndef INTERFACE_H_
+#define INTERFACE_H_
 
-//void *interface(void *ptr);
-//#include "car.h"
+#include "manipulator.h"
 
-void interface(Car car);
+void windowInit();
+void checkEvent(Manipulator);
 
+#endif

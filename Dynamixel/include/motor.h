@@ -1,3 +1,6 @@
+#ifndef MOTOR_H_
+#define MOTOR_H_
+
 #include <dynamixel.h>
 
 // Control table address
@@ -55,3 +58,4 @@ private:
 
 void pingAll();
 
+#endif
