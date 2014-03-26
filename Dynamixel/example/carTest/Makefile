@@ -1,13 +1,13 @@
 # Dynamic makefile
 CC := g++ # This is the main compiler
 # CC := clang --analyze # and comment out the linker last line for sanity
-SRCDIR = src
+SRCDIR = ../../src
 BUILDDIR := build
 TARGET := dynamixel
 
-LIBDIRS		= -L lib
-INCLUDEDIRS	= -I include
-LDFLAGS		= $(LIBDIRS) -lm -ldxl -lpthread -lcurl -ljansson -lX11
+LIBDIRS		= -L ../../lib
+INCLUDEDIRS	= -I ../../include
+LDFLAGS		= $(LIBDIRS) -lm -ldxl -lpthread -lcurl -ljansson
 
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))

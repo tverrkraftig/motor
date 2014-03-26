@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <termio.h>
 #include <unistd.h>
-#include <dynamixel.h>
 #include <pthread.h>
 #include <vector>
-#include <string>
 #include "car.h"
+#include "dynamixel.h"
 
 using namespace std;
 
@@ -15,21 +14,17 @@ using namespace std;
 #define FRONT_LEFT_WHEEL	0
 #define BACK_LEFT_WHEEL		2
 
-#define MAN_ONE			4		//zero at 511
-#define MAN_TWO			7		//zero at 511, not allowed to go under
-#define MAN_THREE		5		//zero at 511
-#define MAN_FOUR		6		//zero at 511
-
-//void *communicationWithServer(void *ptr);
+void *communicationWithServer(void *ptr);
 
 
 int main(){
 
 	pthread_t thread1;
+	int threadinput;
 	int deviceIndex = 0;
 	int baudnum = 1;
-	string command;
-	vector <string> commands;
+
+	pthread_create( &thread1, NULL, communicationWithServer, (void*) threadinput );
 	
 	///////// Open USB2Dynamixel ////////////
 	if( dxl_initialize(deviceIndex, baudnum) == 0 )
@@ -43,34 +38,28 @@ int main(){
 		printf( "Succeed to open USB2Dynamixel!\n" );
 
 	Car car1(FRONT_RIGHT_WHEEL, FRONT_LEFT_WHEEL, BACK_RIGHT_WHEEL, BACK_LEFT_WHEEL);
-	//pthread_create( &thread1, NULL, interface, (void*) car1 );
+	//sleep(1);
+
 	
 		while(1)
 		{
 			try{
-				while(commands.empty())
-				{
-//					commands = getCommands();
-				}
-				while(!commands.empty())
-				{
-					command = commands.front();
-					commands.erase(commands.begin());
-					if(command == "forward")
-						car1.setSpeed(1023,1);
-					if(command == "backward")
-						car1.setSpeed(1023,0);
-					if(command == "stop")
-						car1.setSpeed(0,1);
-					if(command == "leftTurn")
-						car1.turnCar(LEFT_TURN);
-					if(command == "rightTurn")
-						car1.turnCar(RIGHT_TURN);
-					if(command == "noTurn")
-						car1.turnCar(NO_TURN);
-					
-					printf("command: %s\n", command.c_str());
-				}
+				printf( "Press Enter key to continue!(press ESC and Enter to quit)\n" );
+				if(getchar() == 0x1b)
+					break;
+
+				car1.turnCar(NO_TURN);
+				car1.setSpeed(500, 0);
+				sleep(1);
+				car1.setSpeed(0,0);
+				/*car1.turnCar(LEFT_TURN);
+				sleep(1);
+				car1.turnCar(RIGHT_TURN);
+				sleep(1);
+				car1.turnCar(NO_TURN);
+				car1.setSpeed(1023,1);
+				sleep(1);	
+				car1.setSpeed(0,0);*/
 			}
 
 			catch(MotorException e) {
@@ -115,7 +104,7 @@ int main(){
 	
 	
 	// Close device
-	car1.setSpeed(0,1);
+	car1.setSpeed(0,false);
 	dxl_terminate();
 	printf( "Press Enter key to terminate...\n" );
 	getchar();
@@ -123,8 +112,8 @@ int main(){
 	return 0;
 }
 
-//void *communicationWithServer(void *ptr){
-//	while(1){
-//		//get and send with server here
-//	}
-//}
+void *communicationWithServer(void *ptr){
+	while(1){
+		//get and send with server here
+	}
+}
