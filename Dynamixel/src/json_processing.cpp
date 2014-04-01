@@ -11,13 +11,13 @@
 
 #include <jansson.h>
 
-#include "server_communication.h"
 #include "http_functions.h"
 
 #define BUFFER_SIZE  (256 * 1024)  /* 256 KB */
 
 #define URL_FORMAT   "https://wodinaz.com/%s"
 #define URL_SIZE     256
+int i=0;
 
 //URL's
 #define PATH_CONNECT "connect"
@@ -34,9 +34,28 @@
 using namespace std;
 
 int myID=0;
-int i = 0;
+int testID=0;
 
 //functions
+
+
+
+void debug_print_map(map<string,double> mymap){
+    for (map<string,double>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
+    {
+      string key = it->first;
+      double value = it->second;
+      printf ("sensor %s has value %f\n",key.c_str(),value);
+    }
+}
+
+void debug_print_vector(vector<string> myvector){
+    for (vector<string>::iterator it=myvector.begin(); it!=myvector.end(); ++it)
+    {
+      string command = *it;
+      printf ("command: %s\n",command.c_str());
+    }
+}
 
 string convertIntToString(int number)
 {
@@ -69,41 +88,6 @@ string convertDoubleToString(double number){
 
     return convert.str(); // set 'Result' to the contents of the stream
 
-}
-
-int json_connect(){
-    int id;
-
-    char *text_response;
-    char url[URL_SIZE];
-    snprintf(url, URL_SIZE, URL_FORMAT, PATH_CONNECT);
-    printf("url:%s\n",url);
-    text_response = http_request(url);
-    json_t *root;
-    json_error_t error;
-    root = json_loads(text_response, 0, &error);
-    free(text_response);
-    
-    if(!root)
-    {
-        fprintf(stderr, "error: on line %d: %s\n", error.line, error.text);
-        throw 202;
-    }
-
-    if(!json_is_object(root))
-    {
-        fprintf(stderr, "error: root is not an object\n");
-        json_decref(root);
-        throw 202;
-    }
-    
-    json_t *received_id;
-    received_id = json_object_get(root,"id");
-    if (!json_is_integer(received_id)){
-        throw 202;
-    }
-    id = json_integer_value(received_id);
-    return id;
 }
 
 map<string,double> json_get_data(int id){
@@ -354,29 +338,28 @@ vector<string> json_get_commands(int id){
             command = json_string_value(iterator);
             printf("command:%s\n",command.c_str());
         }
-        commands_vector.push_back(command);
     }
     return commands_vector;
 }
          
   
+void json_test_function(){
+    map<string,double> debug_map;
+    debug_map["test1"]=8.9;
+    debug_map["test2"]=5678.456;
+    printf("Sending data\n");
+    json_send_data(debug_map);
+    printf("printing data\n");
+    debug_print_map(json_get_data(testID));
+    
 
-
-void debug_print_map(map<string,double> mymap){
-    for (map<string,double>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
-    {
-      string key = it->first;
-      double value = it->second;
-      printf ("sensor %s has value %f\n",key.c_str(),value);
-    }
-}
-
-void debug_print_vector(vector<string> myvector){
-    for (vector<string>::iterator it=myvector.begin(); it!=myvector.end(); ++it)
-    {
-      string command = *it;
-      printf ("command: %s\n",command.c_str());
-    }
+    string command1="command_one";
+    string command2="command two";
+    printf("sending commands\n");
+    json_send_command(command1,testID);
+    json_send_command(command2,testID);
+    printf("printing commands\n");
+    debug_print_vector(json_get_commands(testID));
 }
 
 void json_set_myID(int id){
@@ -384,8 +367,5 @@ void json_set_myID(int id){
 }
 
 int json_get_myID(){
-    int temp_id=myID;
-    return temp_id;
+    return myID;
 }
-
-

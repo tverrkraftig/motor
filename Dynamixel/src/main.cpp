@@ -9,6 +9,9 @@
 #include "manipulator.h"
 #include "interface.h"
 
+//server communication
+#include "json_processing.h"
+
 using namespace std;
 
 //put ID of the wheels here
@@ -25,6 +28,7 @@ using namespace std;
 //void *communicationWithServer(void *ptr);
 
 
+
 int main(){
 
 	pthread_t thread1;
@@ -32,6 +36,9 @@ int main(){
 	int baudnum = 1;
 	string command;
 	vector <string> commands;
+
+	//TESTTING SERVER COMMUNICATION CODE
+	json_test_function();
 	
 	///////// Open USB2Dynamixel ////////////
 	if( dxl_initialize(deviceIndex, baudnum) == 0 )
