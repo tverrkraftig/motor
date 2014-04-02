@@ -1,3 +1,6 @@
+#ifndef CAR_H_
+#define CAR_H_
+
 #include "motor.h"
 
 #define NO_TURN		0
@@ -31,3 +34,5 @@ private:
 	Motor backRightWheel;
 	Motor backLeftWheel;
 };
+
+#endif

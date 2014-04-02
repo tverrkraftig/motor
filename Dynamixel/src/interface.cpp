@@ -6,10 +6,10 @@
 
 #define KEYMASK ButtonPressMask | KeyPressMask | KeyReleaseMask | ButtonReleaseMask | PointerMotionMask
 
-#define FORWARD 98
-#define BACKWARD 104
-#define LEFT 100
-#define RIGHT 102
+#define FORWARD 25
+#define BACKWARD 39
+#define LEFT 38
+#define RIGHT 40
 
 #define LEFT_MOUSE_BUTTON 	1
 #define RIGHT_MOUSE_BUTTON 	3
@@ -55,7 +55,7 @@ void windowInit()
     //do not detect autorepeating events from keyboard
     XAutoRepeatOff(display);
 }
-void checkEvent(Manipulator man){
+void checkEvent(Manipulator man, Car car){
         XNextEvent (display, & event);
         switch(event.type){
 		case MotionNotify:
@@ -97,37 +97,45 @@ void checkEvent(Manipulator man){
 			switch(event.xkey.keycode){
 				case FORWARD:
 					printf("forward\n");
+					car.setSpeed(1023,1);
 					break;
 				case BACKWARD:
+					car.setSpeed(1023,0);
 					printf("backward\n");
 					break;
 				case RIGHT:
+					car.turnCar(RIGHT_TURN);
 					printf("right\n");
 					break;
 				case LEFT:
+					car.turnCar(LEFT_TURN);
 					printf("left\n");
 					break;
 				default:
-					printf("unknown\n");
+					printf("unknown:%d\n",event.xkey.keycode);
 			}
 			break;
 		case KeyRelease:
 			//printf( "KeyRelease: %d\n", e.xkey.keycode );
 			switch(event.xkey.keycode){
 				case FORWARD:
-					printf("forward\n");
+					car.setSpeed(0,1);
+					printf("forward released\n");
 					break;
 				case BACKWARD:
-					printf("backward\n");
+					car.setSpeed(0,1);
+					printf("backward released\n");
 					break;
 				case RIGHT:
-					printf("right\n");
+					car.turnCar(NO_TURN);
+					printf("right released\n");
 					break;
 				case LEFT:
-					printf("left\n");
+					car.turnCar(NO_TURN);
+					printf("left released\n");
 					break;
 				default:
-					printf("unknown\n");
+					printf("unknown:%d\n",event.xkey.keycode);
 			}
 			break;
 	}

@@ -2,8 +2,9 @@
 #define INTERFACE_H_
 
 #include "manipulator.h"
+#include "car.h"
 
 void windowInit();
-void checkEvent(Manipulator);
+void checkEvent(Manipulator, Car);
 
 #endif

@@ -195,7 +195,7 @@ map<string,double> json_get_data(int id){
 }
 
 void json_send_data(map<string,double> mymap){
-    printf("starting send_data\n");
+    //printf("starting send_data\n");
     
     char url[URL_SIZE];
     
@@ -228,8 +228,8 @@ void json_send_data(map<string,double> mymap){
         json_string.append(" ");
         json_string.append("\""+value_string+"\""+"}");
         snprintf(url, URL_SIZE, URL_FORMAT, http_path.c_str());
-        printf("url:%s\n",url);
-        printf("json_string:%s\n",json_string.c_str());
+        //printf("url:%s\n",url);
+        //printf("json_string:%s\n",json_string.c_str());
 
         char *json_cstring = new char[json_string.length() + 1];
         strcpy(json_cstring, json_string.c_str());
@@ -272,7 +272,7 @@ void json_send_command(string cmd,int id){
 }
 
 vector<string> json_get_commands(int id){
-    printf("starting get_commands\n");
+    //printf("starting get_commands\n");
     vector<string> commands_vector;
     int root_length=0;
     char *text_response;
@@ -282,10 +282,10 @@ vector<string> json_get_commands(int id){
     string id_string = "client_"+convertIntToString(id);
     id_path.append(id_string);
     snprintf(url, URL_SIZE, URL_FORMAT, id_path.c_str());
-    printf("url:%s\n",url);
+    //printf("url:%s\n",url);
 
     text_response = http_request(url);
-    printf("response:%s\n",text_response);
+    //printf("response:%s\n",text_response);
     json_t *root;
     json_error_t error;
     root = json_loads(text_response, 0, &error);
@@ -305,7 +305,7 @@ vector<string> json_get_commands(int id){
     }
     
     root_length=json_array_size(root);
-    printf("root_length:%d\n",root_length );
+    //printf("root_length:%d\n",root_length );
     //getting the actual data
     json_t *data, *time_stamp, *iterator;
     double timeStamp;
@@ -336,8 +336,9 @@ vector<string> json_get_commands(int id){
         }
         else {
             command = json_string_value(iterator);
-            printf("command:%s\n",command.c_str());
+            //printf("command:%s\n",command.c_str());
         }
+        commands_vector.push_back(command);
     }
     return commands_vector;
 }
