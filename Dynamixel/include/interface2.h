@@ -1,3 +1,0 @@
-
-void windowInit();
-void checkEvent();
