@@ -20,12 +20,30 @@
 #define CENTER			1
 #define RIGHT			2
 
+/*melody:
+	0: Rising
+	1: Falling
+	2: Fight
+	4: Fail
+	5: sad
+	6: bip bip
+	7: sad 2
+	10: whistle rise
+	11: bip bop
+	15: bip bip 2
+	16: phone
+	21: whistle
+	24: rtrtrrtrt
+*/
+
 class Sensor{
 public:
 	Sensor(int);
 	int getSound();
 	int getIR(int);
-	int getLight(int);
+	int getLight(int);	//only infrared light
+	void playMelody(int);	//input range 0-26
+	int ping();
 private:
 	int ID;
 	int commStatus;

@@ -234,7 +234,7 @@ void json_send_data(map<string,double> mymap){
         char *json_cstring = new char[json_string.length() + 1];
         strcpy(json_cstring, json_string.c_str());
         // do stuff
-        
+
         http_post(url,json_cstring);
         free(json_cstring);
     }

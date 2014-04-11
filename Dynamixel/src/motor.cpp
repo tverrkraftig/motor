@@ -5,13 +5,9 @@
 Motor::Motor(int theID, int theMode){
 	ID = theID;
 	mode = theMode;
-	setMode(mode);
 	commStatus = COMM_RXSUCCESS;
-	//dxl_write_word( ID, MAX_TORQUE_L, 1023 );
-	/*commStatus = dxl_get_result();
-	if(commStatus != COMM_RXSUCCESS)
-		throw commStatus;
-	printErrorCode();*/
+	//ping();
+	setMode(mode);
 }
 
 int Motor::getMode(){
@@ -20,8 +16,8 @@ int Motor::getMode(){
 
 int Motor::getPosition(){
 	//if motor unreachable
-	if(commStatus != COMM_RXSUCCESS)
-		return -1;
+//	if(commStatus != COMM_RXSUCCESS)
+//		return -1;
 		
 	int temp = dxl_read_word( ID, PRESENT_POSITION_L );
 	commStatus = dxl_get_result();
@@ -48,8 +44,8 @@ int Motor::getSpeed(){
 
 void Motor::setGoalPosition(int thePosition){
 	//if motor unreachable
-	if(commStatus != COMM_RXSUCCESS)
-		return;
+//	if(commStatus != COMM_RXSUCCESS)
+//		return;
 		
 	dxl_write_word( ID, GOAL_POSITION_L, thePosition );
 	commStatus = dxl_get_result();
@@ -165,7 +161,7 @@ int Motor::ping(){
 	commStatus = dxl_get_result();
 	if( commStatus == COMM_RXSUCCESS )
 	{
-		printf("ID: %d active!\n",ID);
+		printf("Motor ID: %d active!\n",ID);
 		return 1;
 	}
 	return 0;

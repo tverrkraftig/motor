@@ -53,7 +53,7 @@ void Manipulator::setAngles(float t1, float t2, float t3){
 	else{
 		dummy = (float)(t1*ANGLE_TO_VALUE+511);
 		one.setGoalPosition(dummy);
-		printf("one: %d\n",dummy);
+		//printf("one: %d\n",dummy);
 	}
 
 	if(t2 != t2)
@@ -69,7 +69,7 @@ void Manipulator::setAngles(float t1, float t2, float t3){
 	else{
 		dummy = (float)(t2*ANGLE_TO_VALUE+511);
 		two.setGoalPosition(dummy);
-		printf("two: %d\n",dummy);
+		//printf("two: %d\n",dummy);
 	}
 
 	if(t3 != t3)
@@ -85,19 +85,11 @@ void Manipulator::setAngles(float t1, float t2, float t3){
 	else{
 		dummy = (float)(t3*ANGLE_TO_VALUE+511);
 		three.setGoalPosition(dummy);
-		printf("three: %d\n",dummy);
+		//printf("three: %d\n",dummy);
 	}	
 }
 
 void Manipulator::setGripper(bool on){
-//	for(int i=0; i<20; i++){
-//		grip_left.setGoalPosition(511-50);
-//		grip_right.setGoalPosition(511+50);
-//		usleep(150000);
-//		grip_left.setGoalPosition(GRIPPER_LEFT_ZERO);
-//		grip_right.setGoalPosition(GRIPPER_RIGHT_ZERO);
-//		usleep(150000);
-//	}
 
 	if(!on){
 		grip_left.setGoalPosition(511-50);
@@ -128,7 +120,23 @@ void Manipulator::setGripper(bool on){
 		usleep(1000);
 		
 	}
-	//stop when no difference in position in x number of times
+}
+
+void Manipulator::drawLine(int xstart, int ystart, int xend, int yend, int z){
+	goToPosition(xstart,ystart,z+50);
+	sleep(1);
+	goToPosition(xstart,ystart,z);
+	usleep(100000);
+	int x = xend-xstart;
+	int y = yend-ystart;
+	int length = sqrt(x*x+y*y);
+	x /= length;	//normalize
+	y /= length;	//normalize
+	for(int i = 0; i<length; i++){
+		printf("x: %d\ty: %d\n",xstart+i*x, ystart+i*y);
+		goToPosition(xstart+i*x, ystart+i*y, z);
+		usleep(10000);
+	}
 }
 
 

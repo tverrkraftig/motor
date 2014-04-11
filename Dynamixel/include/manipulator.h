@@ -12,6 +12,7 @@ public:
 	void goToPosition(int, int, int);
 	void setAngles(float, float, float);
 	void setGripper(bool);
+	void drawLine(int, int, int, int, int);
 private:
 	float theta1;
 	float theta2;
