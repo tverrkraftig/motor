@@ -23,7 +23,11 @@ using namespace std;
 #define MAN_ONE			4		//zero at 511
 #define MAN_TWO			7		//zero at 511, not allowed to go under
 #define MAN_THREE		5		//zero at 511
-#define MAN_FOUR		6		//zero at 511
+
+#define SENSOR			100
+
+#define GRIPPER_LEFT		12
+#define GRIPPER_RIGHT		6
 
 void *sendSensorData(void *ptr);
 
@@ -53,12 +57,15 @@ int main(){
 	//windowInit();
 	
 	Car car1(FRONT_RIGHT_WHEEL, FRONT_LEFT_WHEEL, BACK_RIGHT_WHEEL, BACK_LEFT_WHEEL);
-	Manipulator manipulator1(MAN_ONE, MAN_TWO, MAN_THREE, MAN_FOUR);
-
+	Manipulator manipulator1(MAN_ONE, MAN_TWO, MAN_THREE, GRIPPER_LEFT, GRIPPER_RIGHT);
+	
 	//get old commands from server and disregard them
 	vector <string> dummy = json_get_commands(0);
-		
-	pthread_create( &thread1, NULL, sendSensorData, (void*) input );
+	//pthread_create( &thread1, NULL, sendSensorData, (void*) input );
+
+	manipulator1.goToPosition(0,77,155);
+	manipulator1.setGripper(0);
+	
 	
 		while(1)
 		{
@@ -68,32 +75,32 @@ int main(){
 
 //				for(int i = 0; i < 130; i+=10)
 //				{
-//					manipulator1.goToPosition(0,100,i);
+//					manipulator1.goToPosition(0,150,i);
 //					usleep(50000);
 //				}
 //				for(int i = 130; i > 0; i-=10)
 //				{
-//					manipulator1.goToPosition(0,100,i);
+//					manipulator1.goToPosition(0,150,i);
 //					usleep(50000);
 //				}
 //				
 //				for(int i = 0; i < 100; i+=10)
 //				{
-//					manipulator1.goToPosition(i,100,0);
+//					manipulator1.goToPosition(i,150,0);
 //					usleep(50000);
 //				}
 //				for(int i = 100; i > -100; i-=10)
 //				{
-//					manipulator1.goToPosition(i,100,0);
+//					manipulator1.goToPosition(i,150,0);
 //					usleep(50000);
 //				}
 //				for(int i = -100; i < 0; i+=10)
 //				{
-//					manipulator1.goToPosition(i,100,0);
+//					manipulator1.goToPosition(i,150,0);
 //					usleep(50000);
 //				}
 				
-				
+
 				while(commands.empty())
 				{
 					commands = json_get_commands(0);
@@ -104,16 +111,28 @@ int main(){
 					commands.erase(commands.begin());
 					if(command == "forward")
 						car1.setSpeed(1023,1);
+						
 					else if(command == "backward")
 						car1.setSpeed(1023,0);
+						
 					else if(command == "stop")
 						car1.setSpeed(0,1);
+						
 					else if(command == "leftTurn")
 						car1.turnCar(LEFT_TURN);
+						
 					else if(command == "rightTurn")
 						car1.turnCar(RIGHT_TURN);
+						
 					else if(command == "noTurn")
 						car1.turnCar(NO_TURN);
+						
+					else if(command == "gripClose")
+						manipulator1.setGripper(1);
+						
+					else if(command == "gripOpen")
+						manipulator1.setGripper(0);
+						
 					else if(command.find(strCheck) != string::npos){
 						size_t found1 = command.find(" ");
 						size_t found2 = command.find(" ", found1+1);
@@ -127,6 +146,7 @@ int main(){
 						int z = atoi(nr3.c_str());
 						manipulator1.goToPosition(x, y, z);
 					}
+					
 					else
 						printf("Unknown command\n");
 

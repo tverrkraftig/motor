@@ -22,7 +22,7 @@ Window window;
 XEvent event;
 bool button = 0;
 int xpos = 0;
-int ypos = 100;
+int ypos = 500;
 int zpos = 0;
 int xzero = 0;
 int yzero = 0;
@@ -31,7 +31,6 @@ void windowInit()
 {
     
     int s;
- 
     /* open connection with the server */
     display = XOpenDisplay(NULL);
     if (display == NULL)
@@ -54,6 +53,7 @@ void windowInit()
 
     //do not detect autorepeating events from keyboard
     XAutoRepeatOff(display);
+    printf("Display open\n");
 }
 void checkEvent(Manipulator man, Car car){
         XNextEvent (display, & event);
@@ -64,8 +64,8 @@ void checkEvent(Manipulator man, Car car){
 				ypos += event.xmotion.y - yzero;
 				xzero = event.xmotion.x;
 				yzero = event.xmotion.y;
-				printf("xpos: %d\t ypos: %d\n", xpos, ypos);
-				man.goToPosition(xpos,ypos,zpos);
+				printf("xpos: %d\t ypos: %d\n", xpos/5, ypos/5);
+				man.goToPosition(xpos/5,ypos/5,zpos);
 			}	
 			break;
 		case ButtonPress:
@@ -78,12 +78,12 @@ void checkEvent(Manipulator man, Car car){
 			if(event.xkey.keycode == MOUSE_WHEEL_FORWARD)
 			{
 				zpos+=10;
-				man.goToPosition(xpos,ypos,zpos);
+				man.goToPosition(xpos/5,ypos/5,zpos);
 			}
 			if(event.xkey.keycode == MOUSE_WHEEL_BACKWARD)
 			{
 				zpos-=10;
-				man.goToPosition(xpos,ypos,zpos);
+				man.goToPosition(xpos/5,ypos/5,zpos);
 			}
 			
 			printf( "KeyPress: %d\n", event.xkey.keycode );
