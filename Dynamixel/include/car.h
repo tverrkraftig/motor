@@ -10,9 +10,7 @@
 #define TURN_MAGNITUDE	0.5f
 
 #define IDLE_MODE	0
-#define FRONT_OFF_MODE	1
-#define BACK_OFF_MODE	2
-#define ALL_OFF_MODE	3
+#define FAILSAFE_MODE	1
 
 class Car{
 
@@ -24,6 +22,7 @@ public:
 	void turnCar(int);
 	void setMode(int);
 	int getMode();
+	void ping();
 private:
 	int direction;
 	int speed;

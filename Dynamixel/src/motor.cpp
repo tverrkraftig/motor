@@ -6,7 +6,6 @@ Motor::Motor(int theID, int theMode){
 	ID = theID;
 	mode = theMode;
 	commStatus = COMM_RXSUCCESS;
-	//ping();
 	setMode(mode);
 }
 
@@ -164,6 +163,7 @@ int Motor::ping(){
 		printf("Motor ID: %d active!\n",ID);
 		return 1;
 	}
+	printf("Motor ID: %d NOT active!\n",ID);
 	return 0;
 }
 

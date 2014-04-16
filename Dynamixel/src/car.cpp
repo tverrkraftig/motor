@@ -56,20 +56,28 @@ void Car::turnCar(int theTurn){
 }
 
 void Car::setMode(int theMode){
-	if(mode == FRONT_OFF_MODE && theMode == BACK_OFF_MODE){
-		mode = ALL_OFF_MODE;
-		return;
-	}
-		
-	if(mode == BACK_OFF_MODE && theMode == FRONT_OFF_MODE){
-		mode = ALL_OFF_MODE;
-		return;
-	}
 	mode = theMode;
 }
 
 int Car::getMode(){
 	return mode;
+}
+
+void Car::ping(){
+	int count = 0;
+	
+	count += frontLeftWheel.ping();
+	count += backLeftWheel.ping();
+	count += frontRightWheel.ping();
+	count += backRightWheel.ping();
+
+	if(count == 4){
+		printf("All wheels active!\n");
+		setMode(IDLE_MODE);
+	}
+	else{
+		setMode(FAILSAFE_MODE);
+	}
 }
 
 

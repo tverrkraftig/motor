@@ -6,7 +6,7 @@
 Sensor::Sensor(int theID){
 	ID = theID;
 	commStatus = COMM_RXSUCCESS;
-	//ping();
+	mode = IDLE_MODE;
 }
 
 int Sensor::getSound(){
@@ -56,15 +56,24 @@ void Sensor::playMelody(int song){
 	commStatus = dxl_get_result();
 }
 
-int Sensor::ping(){
+void Sensor::ping(){
 	dxl_ping(ID);
 	commStatus = dxl_get_result();
 	if( commStatus == COMM_RXSUCCESS )
 	{
 		printf("Sensor ID: %d active!\n",ID);
-		return 1;
+		setMode(IDLE_MODE);
 	}
-	return 0;
+	else{
+		setMode(FAILSAFE_MODE);
+	}
 }
 
+void Sensor::setMode(int theMode){
+	mode = theMode;
+}
+
+int Sensor::getMode(){
+	return mode;
+}
 

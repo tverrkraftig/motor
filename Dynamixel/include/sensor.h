@@ -20,6 +20,9 @@
 #define CENTER			1
 #define RIGHT			2
 
+#define IDLE_MODE	0
+#define FAILSAFE_MODE	1
+
 /*melody:
 	0: Rising
 	1: Falling
@@ -43,10 +46,13 @@ public:
 	int getIR(int);
 	int getLight(int);	//only infrared light
 	void playMelody(int);	//input range 0-26
-	int ping();
+	void ping();
+	void setMode(int);
+	int getMode();
 private:
 	int ID;
 	int commStatus;
+	int mode;
 };
 
 #endif

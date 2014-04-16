@@ -139,4 +139,38 @@ void Manipulator::drawLine(int xstart, int ystart, int xend, int yend, int z){
 	}
 }
 
+void Manipulator::drawCircle(int xcenter, int ycenter, int z, int radius, float startAngle, float endAngle, int z){
+	float t = startAngle;
+	float stepSize = 0.01;
+	while(t <= endAngle){
+		goToPosition(radius*sint(t) + xcenter, radius*cos(t) + ycenter, z);
+		t += stepSize;
+		usleep(10000);
+	}
+}
+
+void Manipulator::setMode(int theMode){
+	mode = theMode;
+}
+int Manipulator::getMode(){
+	return mode;
+}
+
+void Manipulator::ping(){
+	int count = 0;
+	
+	count += one.ping();
+	count += two.ping();
+	count += three.ping();
+	count += grip_left.ping();
+	count += grip_right.ping();
+
+	if(count == 5){
+		printf("All manipulator motors active!\n");
+		setMode(IDLE_MODE);
+	}
+	else{
+		setMode(FAILSAFE_MODE);
+	}
+}
 
