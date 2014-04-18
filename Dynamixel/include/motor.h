@@ -57,5 +57,6 @@ private:
 };
 
 void pingAll();
+void printError(int status);
 
 #endif

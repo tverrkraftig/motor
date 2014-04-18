@@ -27,9 +27,6 @@ int Sensor::getLight(int pos){
 }
 
 int Sensor::getIR(int pos){
-	//if sensor unreachable
-//	if(commStatus != COMM_RXSUCCESS)
-//		return -1;
 		
 	int data = dxl_read_byte( ID, IR_LEFT_FIRE_DATA + pos );
 	commStatus = dxl_get_result();
@@ -40,9 +37,7 @@ int Sensor::getIR(int pos){
 }
 
 void Sensor::playMelody(int song){
-	//if sensor unreachable
-	if(commStatus != COMM_RXSUCCESS)
-		return;
+
 	if(song < 0 || song > 26){
 		printf("invalid input\n");
 		return;
@@ -54,6 +49,8 @@ void Sensor::playMelody(int song){
 	
 	dxl_write_byte(ID, BUZZER_DATA_NOTE, song);
 	commStatus = dxl_get_result();
+//	if(commStatus != COMM_RXSUCCESS)
+//		throw MotorException(ID,commStatus);
 }
 
 void Sensor::ping(){

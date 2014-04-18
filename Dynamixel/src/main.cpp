@@ -63,43 +63,42 @@ int main(){
 	Manipulator manipulator1(MAN_ONE, MAN_TWO, MAN_THREE, GRIPPER_LEFT, GRIPPER_RIGHT);
 	Sensor sensor1(SENSOR);
 
-	//NEED TO CHANGE INITIALIZATION HERE
-	try{
-		sensor1.playMelody(6);
-		sleep(1);
-		manipulator1.goToPosition(0,0,155+77);
-		manipulator1.setGripper(0);
-	}
-	catch(MotorException e) {
-		printf("ID: %d lost\n",e.ID);
 
-		switch(e.ID){
-			case FRONT_LEFT_WHEEL:
-			case BACK_LEFT_WHEEL:
-			case FRONT_RIGHT_WHEEL:
-			case BACK_RIGHT_WHEEL:
-				car1.setMode(FAILSAFE_MODE);
-				printf("Wheels lost!\n");
-				break;
-			case MAN_ONE:
-			case MAN_TWO:
-			case MAN_THREE:
-			case GRIPPER_LEFT:
-			case GRIPPER_RIGHT:
-				manipulator1.setMode(FAILSAFE_MODE);
-				printf("Manipulator lost!\n");
-				break;
-			case SENSOR:
-				sensor1.setMode(FAILSAFE_MODE);
-				printf("Sensor lost!\n");
-				break;
-			default:
-				printf("Whuut?\n");
-				break;
-		}
-		
-		printError(e.status);
-	}
+	sensor1.playMelody(6);
+	sleep(1);
+	manipulator1.goToPosition(0,0,155+77);
+	manipulator1.setGripper(0);
+
+//	catch(MotorException e) {
+//		printf("ID: %d lost\n",e.ID);
+
+//		switch(e.ID){
+//			case FRONT_LEFT_WHEEL:
+//			case BACK_LEFT_WHEEL:
+//			case FRONT_RIGHT_WHEEL:
+//			case BACK_RIGHT_WHEEL:
+//				car1.setMode(FAILSAFE_MODE);
+//				printf("Wheels lost!\n");
+//				break;
+//			case MAN_ONE:
+//			case MAN_TWO:
+//			case MAN_THREE:
+//			case GRIPPER_LEFT:
+//			case GRIPPER_RIGHT:
+//				manipulator1.setMode(FAILSAFE_MODE);
+//				printf("Manipulator lost!\n");
+//				break;
+//			case SENSOR:
+//				sensor1.setMode(FAILSAFE_MODE);
+//				printf("Sensor lost!\n");
+//				break;
+//			default:
+//				printf("Whuut?\n");
+//				break;
+//		}
+//		
+//		printError(e.status);
+//	}
 	
 	//get old commands from server and disregard them
 	vector <string> dummy = json_get_commands(0);
@@ -115,8 +114,6 @@ int main(){
 	
 		while(1)
 		{
-			try{
-
 				if(car1.getMode() == FAILSAFE_MODE){
 					car1.ping();
 					continue;
@@ -210,38 +207,37 @@ int main(){
 
 //					printf("command: %s\n", command.c_str());
 //				}
-			}
 
-			catch(MotorException e) {
-				printf("ID: %d lost\n",e.ID);
-				
-				switch(e.ID){
-					case FRONT_LEFT_WHEEL:
-					case BACK_LEFT_WHEEL:
-					case FRONT_RIGHT_WHEEL:
-					case BACK_RIGHT_WHEEL:
-						car1.setMode(FAILSAFE_MODE);
-						printf("Wheels lost!\n");
-						break;
-					case MAN_ONE:
-					case MAN_TWO:
-					case MAN_THREE:
-					case GRIPPER_LEFT:
-					case GRIPPER_RIGHT:
-						manipulator1.setMode(FAILSAFE_MODE);
-						printf("Manipulator lost!\n");
-						break;
-					case SENSOR:
-						sensor1.setMode(FAILSAFE_MODE);
-						printf("Sensor lost!\n");
-						break;
-					default:
-						printf("Whuut?\n");
-						break;
-				}
-				
-				printError(e.status);
-			}
+//			catch(MotorException e) {
+//				printf("ID: %d lost\n",e.ID);
+//				
+//				switch(e.ID){
+//					case FRONT_LEFT_WHEEL:
+//					case BACK_LEFT_WHEEL:
+//					case FRONT_RIGHT_WHEEL:
+//					case BACK_RIGHT_WHEEL:
+//						car1.setMode(FAILSAFE_MODE);
+//						printf("Wheels lost!\n");
+//						break;
+//					case MAN_ONE:
+//					case MAN_TWO:
+//					case MAN_THREE:
+//					case GRIPPER_LEFT:
+//					case GRIPPER_RIGHT:
+//						manipulator1.setMode(FAILSAFE_MODE);
+//						printf("Manipulator lost!\n");
+//						break;
+//					case SENSOR:
+//						sensor1.setMode(FAILSAFE_MODE);
+//						printf("Sensor lost!\n");
+//						break;
+//					default:
+//						printf("Whuut?\n");
+//						break;
+//				}
+//				
+//				printError(e.status);
+//			}
 	
 		}
 
@@ -255,6 +251,8 @@ int main(){
 
 //thread function for continously sending data
 void *sendSensorData(void *ptr){
+
+	//initialize sensor here?
 	Sensor* p = (Sensor*)ptr;
 	int data;
 	map <string,double> sensorData;
@@ -287,36 +285,4 @@ void *sendSensorData(void *ptr){
 	}
 }
 
-void printError(int status){
-	switch(status)
-	{
-	case COMM_TXFAIL:
 
-		printf("COMM_TXFAIL: Failed transmit instruction packet!\n");
-		break;
-
-	case COMM_TXERROR:
-		printf("COMM_TXERROR: Incorrect instruction packet!\n");
-		break;
-
-	case COMM_RXFAIL:
-		printf("COMM_RXFAIL: Failed get status packet from device!\n");
-		break;
-
-	case COMM_RXWAITING:
-		printf("COMM_RXWAITING: Now recieving status packet!\n");
-		break;
-
-	case COMM_RXTIMEOUT:
-		printf("COMM_RXTIMEOUT: There is no status packet!\n");
-		break;
-
-	case COMM_RXCORRUPT:
-		printf("COMM_RXCORRUPT: Incorrect status packet!\n");
-		break;
-
-	default:
-		printf("This is unknown error code!\n");
-		break;
-	}
-}
