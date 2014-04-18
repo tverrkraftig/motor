@@ -17,11 +17,11 @@ using namespace std;
 void Manipulator::goToPosition(int x, int y, int z){
 
 	//return error if beyond max
-	if((x*x+y*y+z*z) > (D2+D3)*(D2+D3))
-	{
-		printf("invalid position!\n");
-		return;
-	}
+//	if((x*x+y*y+z*z) > (D2+D3)*(D2+D3))
+//	{
+//		printf("invalid position!\n");
+//		return;
+//	}
 	
 	float s3, c3, l;
 	
@@ -94,6 +94,7 @@ void Manipulator::setAngles(float t1, float t2, float t3){
 		printError(e.status);
 		setMode(FAILSAFE_MODE);
 		printf("Manipulator lost!\n");
+		startPing();
 	}
 }
 
@@ -134,6 +135,7 @@ void Manipulator::setGripper(bool on){
 		printError(e.status);
 		setMode(FAILSAFE_MODE);
 		printf("Manipulator lost!\n");
+		startPing();
 	}
 }
 
@@ -159,15 +161,16 @@ void Manipulator::drawLine(int xstart, int ystart, int xend, int yend, int z){
 		printError(e.status);
 		setMode(FAILSAFE_MODE);
 		printf("Manipulator lost!\n");
+		startPing();
 	}
 }
 
-void Manipulator::drawCircle(int xcenter, int ycenter, int z, int radius, float startAngle, float endAngle, int z){
+void Manipulator::drawCircle(int xcenter, int ycenter, int z, int radius, float startAngle, float endAngle){
 	try{
 		float t = startAngle;
 		float stepSize = 0.01;
 		while(t <= endAngle){
-			goToPosition(radius*sint(t) + xcenter, radius*cos(t) + ycenter, z);
+			goToPosition(radius*sin(t) + xcenter, radius*cos(t) + ycenter, z);
 			t += stepSize;
 			usleep(10000);
 		}
@@ -177,6 +180,7 @@ void Manipulator::drawCircle(int xcenter, int ycenter, int z, int radius, float 
 		printError(e.status);
 		setMode(FAILSAFE_MODE);
 		printf("Manipulator lost!\n");
+		startPing();
 	}
 }
 
@@ -188,20 +192,34 @@ int Manipulator::getMode(){
 }
 
 void Manipulator::ping(){
-	int count = 0;
+	printf("Ping Manipulators\n");
+	while(1){
+		int count = 0;
 	
-	count += one.ping();
-	count += two.ping();
-	count += three.ping();
-	count += grip_left.ping();
-	count += grip_right.ping();
+		count += one.ping();
+		count += two.ping();
+		count += three.ping();
+		count += grip_left.ping();
+		count += grip_right.ping();
 
-	if(count == 5){
-		printf("All manipulator motors active!\n");
-		setMode(IDLE_MODE);
+		if(count == 5){
+			printf("All manipulator motors active!\n");
+			printf("Returning to start position\n");
+			setMode(IDLE_MODE);
+			goToPosition(XSTART,YSTART,ZSTART);
+			setGripper(0);
+			return;
+		}
 	}
-	else{
-		setMode(FAILSAFE_MODE);
-	}
+}
+
+void Manipulator::startPing(){
+	pthread_create(&thread, NULL, Manipulator::staticEntryPoint, this);
+}
+
+void * Manipulator::staticEntryPoint(void * c)
+{
+    ((Manipulator *) c)->ping();
+    return NULL;
 }
 

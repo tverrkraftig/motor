@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "interface.h"
+#include "manipulator.h"
 
 #define KEYMASK ButtonPressMask | KeyPressMask | KeyReleaseMask | ButtonReleaseMask | PointerMotionMask
 
@@ -21,9 +22,10 @@ Display *display;
 Window window;
 XEvent event;
 bool button = 0;
-int xpos = 0;
-int ypos = 500;
-int zpos = 0;
+bool buttonR = 0;
+int xpos = XSTART;
+int ypos = YSTART;
+int zpos = ZSTART;
 int xzero = 0;
 int yzero = 0;
  
@@ -42,7 +44,7 @@ void windowInit()
     s = DefaultScreen(display);
  
     /* create window */
-    window = XCreateSimpleWindow(display, RootWindow(display, s), 10, 10, 200, 200, 1,
+    window = XCreateSimpleWindow(display, RootWindow(display, s), 10, 10, 500, 500, 1,
                            BlackPixel(display, s), WhitePixel(display, s));
  
     /* select kind of events we are interested in */
@@ -64,8 +66,8 @@ void checkEvent(Manipulator man, Car car){
 				ypos += event.xmotion.y - yzero;
 				xzero = event.xmotion.x;
 				yzero = event.xmotion.y;
-				printf("xpos: %d\t ypos: %d\n", xpos/5, ypos/5);
-				man.goToPosition(xpos/5,ypos/5,zpos);
+				printf("xpos: %d\t ypos: %d\n", xpos, ypos);
+				man.goToPosition(xpos,ypos,zpos);
 			}	
 			break;
 		case ButtonPress:
@@ -75,15 +77,20 @@ void checkEvent(Manipulator man, Car car){
 				xzero = event.xbutton.x;
 				yzero = event.xbutton.y;
 			}
+			if(event.xkey.keycode == RIGHT_MOUSE_BUTTON)
+			{
+				buttonR ^= 1;
+				man.setGripper(buttonR);
+			}
 			if(event.xkey.keycode == MOUSE_WHEEL_FORWARD)
 			{
 				zpos+=10;
-				man.goToPosition(xpos/5,ypos/5,zpos);
+				man.goToPosition(xpos,ypos,zpos);
 			}
 			if(event.xkey.keycode == MOUSE_WHEEL_BACKWARD)
 			{
 				zpos-=10;
-				man.goToPosition(xpos/5,ypos/5,zpos);
+				man.goToPosition(xpos,ypos,zpos);
 			}
 			
 			printf( "KeyPress: %d\n", event.xkey.keycode );

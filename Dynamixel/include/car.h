@@ -2,6 +2,7 @@
 #define CAR_H_
 
 #include "motor.h"
+#include <pthread.h>
 
 #define NO_TURN		0
 #define LEFT_TURN	1
@@ -22,7 +23,7 @@ public:
 	void turnCar(int);
 	void setMode(int);
 	int getMode();
-	void ping();
+	void startPing();
 private:
 	int direction;
 	int speed;
@@ -32,6 +33,9 @@ private:
 	Motor frontLeftWheel;
 	Motor backRightWheel;
 	Motor backLeftWheel;
+	pthread_t thread;
+	static void * staticEntryPoint(void * c);
+	void ping();
 };
 
 #endif

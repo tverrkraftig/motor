@@ -2,11 +2,15 @@
 #define MANIPULATOR_H_
 
 #include "motor.h"
+#include <pthread.h>
 
 #define PI 3.14159265
 
 #define IDLE_MODE	0
 #define FAILSAFE_MODE	1
+#define XSTART		0
+#define YSTART		0
+#define ZSTART		155+77
 
 class Manipulator{
 public:	
@@ -19,7 +23,7 @@ public:
 	void drawCircle(int, int, int, int, float, float);
 	void setMode(int);
 	int getMode();
-	void ping();
+	void startPing();
 private:
 	float theta1;
 	float theta2;
@@ -30,6 +34,9 @@ private:
 	Motor three;
 	Motor grip_left;
 	Motor grip_right;
+	pthread_t thread;
+	static void * staticEntryPoint(void * c);
+	void ping();
 };
 
 #endif

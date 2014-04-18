@@ -9,20 +9,15 @@ Sensor::Sensor(int theID){
 	mode = IDLE_MODE;
 }
 
-int Sensor::getSound(){
-	return 1;
-}
-
 int Sensor::getLight(int pos){
-	//if sensor unreachable
-	if(commStatus != COMM_RXSUCCESS)
-		return -1;
 		
 	int data = dxl_read_byte( ID, LIGHT_LEFT_DATA + pos );
 	commStatus = dxl_get_result();
 	if(commStatus != COMM_RXSUCCESS)
-		throw MotorException(ID,commStatus);
-		
+	{
+		mode = FAILSAFE_MODE;
+		printf("sensor lost\n");
+	}	
 	return data;
 }
 
@@ -31,7 +26,11 @@ int Sensor::getIR(int pos){
 	int data = dxl_read_byte( ID, IR_LEFT_FIRE_DATA + pos );
 	commStatus = dxl_get_result();
 	if(commStatus != COMM_RXSUCCESS)
-		throw MotorException(ID,commStatus);
+	{
+		mode = FAILSAFE_MODE;
+		printf("sensor lost\n");
+	}
+		
 		
 	return data;
 }
@@ -45,12 +44,17 @@ void Sensor::playMelody(int song){
 	dxl_write_byte(ID, BUZZER_DATA_TIME, 255);
 	commStatus = dxl_get_result();
 	if(commStatus != COMM_RXSUCCESS)
-		throw MotorException(ID,commStatus);
-	
+	{
+		mode = FAILSAFE_MODE;
+		printf("sensor lost\n");
+	}
 	dxl_write_byte(ID, BUZZER_DATA_NOTE, song);
 	commStatus = dxl_get_result();
-//	if(commStatus != COMM_RXSUCCESS)
-//		throw MotorException(ID,commStatus);
+	if(commStatus != COMM_RXSUCCESS)
+	{
+		mode = FAILSAFE_MODE;
+		printf("sensor lost\n");
+	}
 }
 
 void Sensor::ping(){

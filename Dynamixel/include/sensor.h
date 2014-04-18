@@ -42,7 +42,6 @@
 class Sensor{
 public:
 	Sensor(int);
-	int getSound();
 	int getIR(int);
 	int getLight(int);	//only infrared light
 	void playMelody(int);	//input range 0-26
