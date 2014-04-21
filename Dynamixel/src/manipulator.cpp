@@ -37,6 +37,9 @@ void Manipulator::goToPosition(int x, int y, int z){
 }
 
 void Manipulator::setAngles(float t1, float t2, float t3){
+
+	if(mode == FAILSAFE_MODE)
+		return;
 	
 	try{
 		int dummy;
@@ -103,6 +106,9 @@ void Manipulator::setAngles(float t1, float t2, float t3){
 
 void Manipulator::setGripper(bool on){
 
+	if(mode == FAILSAFE_MODE)
+		return;
+
 	try{
 		if(!on){
 			grip_left.setGoalPosition(511-50);
@@ -146,6 +152,10 @@ void Manipulator::setGripper(bool on){
 }
 
 void Manipulator::drawLine(int xstart, int ystart, int xend, int yend, int z){
+
+	if(mode == FAILSAFE_MODE)
+		return;
+
 	try{
 		goToPosition(xstart,ystart,z+50);
 		sleep(1);
@@ -175,6 +185,10 @@ void Manipulator::drawLine(int xstart, int ystart, int xend, int yend, int z){
 }
 
 void Manipulator::drawCircle(int xcenter, int ycenter, int z, int radius, float startAngle, float endAngle){
+
+	if(mode == FAILSAFE_MODE)
+		return;
+
 	try{
 		float t = startAngle;
 		float stepSize = 0.01;

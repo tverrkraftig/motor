@@ -2,6 +2,10 @@
 #include <stdio.h>
 
 void Car::setSpeed(int theSpeed, bool dir){
+
+	if(mode == FAILSAFE_MODE)
+		return;
+
 	try{
 		switch(turn)
 		{
@@ -44,6 +48,10 @@ void Car::setSpeed(int theSpeed, bool dir){
 }
 
 void Car::turnCar(int theTurn){
+
+	if(mode == FAILSAFE_MODE)
+		return;
+
 	try{
 		turn = theTurn;
 		if(speed != 0){
