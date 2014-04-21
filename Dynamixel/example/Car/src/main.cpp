@@ -18,6 +18,8 @@ int main(){
 
 	int deviceIndex = 0;
 	int baudnum = 1;
+
+	printf("-------CAR TEST PROGRAM-------\n");
 	
 	///////// Open USB2Dynamixel ////////////
 	if( dxl_initialize(deviceIndex, baudnum) == 0 )
@@ -29,12 +31,15 @@ int main(){
 	}
 	else
 		printf( "Succeed to open USB2Dynamixel!\n" );
-	
+
+
 	Car car1(FRONT_RIGHT_WHEEL, FRONT_LEFT_WHEEL, BACK_RIGHT_WHEEL, BACK_LEFT_WHEEL);
+	sleep(1);
+	
 	car1.setSpeed(1023,1);
-	sleep(1);
+	sleep(2);
 	car1.setSpeed(1023,0);
-	sleep(1);
+	sleep(2);
 	car1.setSpeed(0,1);
 	
 		while(1)

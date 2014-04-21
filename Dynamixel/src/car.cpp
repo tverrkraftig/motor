@@ -33,9 +33,12 @@ void Car::setSpeed(int theSpeed, bool dir){
 	catch(MotorException e) {
 		printf("ID: %d lost\n",e.ID);
 		printError(e.status);
-		setMode(FAILSAFE_MODE);
-		printf("Wheels lost!\n");
-		startPing();
+		if(mode == IDLE_MODE)
+		{
+			mode = FAILSAFE_MODE;
+			printf("Wheels lost!\n");
+			startPing();
+		}
 	}
 	
 }
@@ -66,9 +69,12 @@ void Car::turnCar(int theTurn){
 	catch(MotorException e) {
 		printf("ID: %d lost\n",e.ID);
 		printError(e.status);
-		setMode(FAILSAFE_MODE);
-		printf("Wheels lost!\n");
-		startPing();
+		if(mode == IDLE_MODE)
+		{
+			mode = FAILSAFE_MODE;
+			printf("Wheels lost!\n");
+			startPing();
+		}
 	}
 	
 }
@@ -90,8 +96,6 @@ void Car::ping(){
 		count += backLeftWheel.ping();
 		count += frontRightWheel.ping();
 		count += backRightWheel.ping();
-
-		printf("Ping Pong\n");
 		
 		if(count == 4){
 			printf("All wheels active!\n");

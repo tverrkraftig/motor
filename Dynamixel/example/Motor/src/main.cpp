@@ -14,6 +14,8 @@ int main(){
 	int deviceIndex = 0;
 	int baudnum = 1;
 
+	printf("-------MOTOR TEST PROGRAM-------\n");
+
 	///////// Open USB2Dynamixel ////////////
 	if( dxl_initialize(deviceIndex, baudnum) == 0 )
 	{
@@ -30,16 +32,29 @@ int main(){
 	
 	while(1)
 	{
-		printf( "Press Enter key to continue!(press ESC and Enter to quit)\n" );
-		if(getchar() == 0x1b)
+		try{
+			printf( "Press Enter key to continue!(press ESC and Enter to quit)\n" );
+			if(getchar() == 0x1b)
+				break;
+
+			if(b){
+				printf("motor1 to 300 degrees\n");
+				motor1.setGoalPosition(1023);
+			}
+				
+			else{
+				printf("motor1 to 30 degrees\n");
+				motor1.setGoalPosition(0);
+			}
+				
+
+			b ^= 1;		//change b
+		}
+		catch(MotorException e) {
+			printf("ID: %d lost\n",e.ID);
+			printError(e.status);
 			break;
-
-		if(b)
-			motor1.setGoalPosition(1023);
-		else
-			motor1.setGoalPosition(0);
-
-		b ^= 1;		//change b
+		}
 
 	}
 

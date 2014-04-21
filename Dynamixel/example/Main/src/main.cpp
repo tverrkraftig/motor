@@ -6,37 +6,32 @@
 #include <vector>
 #include <string>
 #include <time.h>
-#include <iostream>
 #include "car.h"
 #include "manipulator.h"
-#include "interface.h"
 #include "json_processing.h"
 #include "sensor.h"
 
 using namespace std;
 
-//put ID of the wheels here
+//ID of wheels
 #define FRONT_RIGHT_WHEEL	1
 #define BACK_RIGHT_WHEEL	3
 #define FRONT_LEFT_WHEEL	0
 #define BACK_LEFT_WHEEL		2
-//#define WHEEL_MAP		FRONT_RIGHT_WHEEL | BACK_RIGHT_WHEEL | FRONT_LEFT_WHEEL | BACK_LEFT_WHEEL
 
+//ID of manipulator arm
 #define MAN_ONE			4		//zero at 511
 #define MAN_TWO			7		//zero at 511, not allowed to go under
 #define MAN_THREE		5		//zero at 511
 
+//ID of gripper
 #define GRIPPER_LEFT		12
 #define GRIPPER_RIGHT		6
 
-//#define MANIPULATOR_MAP		MAN_ONE | MAN_TWO | MAN_THREE | GRIPPER_LEFT | GRIPPER_RIGHT
-
+//ID of sensor
 #define SENSOR			100
 
-
-
 void *sendSensorData(void *ptr);
-void printError(int);
 
 int main(){
 
@@ -46,6 +41,8 @@ int main(){
 	string command;
 	vector <string> commands;
 	string strCheck = "position";
+
+	printf("-------MAIN PROGRAM-------\n");
 	
 	///////// Open USB2Dynamixel ////////////
 	if( dxl_initialize(deviceIndex, baudnum) == 0 )
@@ -58,13 +55,12 @@ int main(){
 	else
 		printf( "Succeed to open USB2Dynamixel!\n" );
 	
-	//windowInit();
 	Car car1(FRONT_RIGHT_WHEEL, FRONT_LEFT_WHEEL, BACK_RIGHT_WHEEL, BACK_LEFT_WHEEL);
 	Manipulator manipulator1(MAN_ONE, MAN_TWO, MAN_THREE, GRIPPER_LEFT, GRIPPER_RIGHT);
 	Sensor sensor1(SENSOR);
-
-	sensor1.playMelody(6);
 	sleep(1);
+	
+	sensor1.playMelody(6);
 	manipulator1.goToPosition(XSTART,YSTART,ZSTART);
 	manipulator1.setGripper(0);
 	
@@ -73,50 +69,17 @@ int main(){
 
 	//create thread for sending sensor data
 	//pthread_create( &thread1, NULL, sendSensorData, &sensor1 );
-
-	//test drawing
-//	manipulator1.setGripper(1);
-//	manipulator1.drawLine(50,200,50,150,0);
-//	manipulator1.drawLine(50,175,25,175,0);
-//	manipulator1.drawLine(25,200,25,150,0);
 	
 		while(1)
 		{
 
-				//checkEvent(manipulator1, car1);
-		
-//				for(int i = 0; i < 130; i+=1)
-//				{
-//					manipulator1.goToPosition(0,150,i);
-//					usleep(5000);
-//				}
-//				for(int i = 130; i > 0; i-=1)
-//				{
-//					manipulator1.goToPosition(0,150,i);
-//					usleep(5000);
-//				}
-//				
-//				for(int i = 0; i < 100; i+=10)
-//				{
-//					manipulator1.goToPosition(i,150,0);
-//					usleep(50000);
-//				}
-//				for(int i = 100; i > -100; i-=10)
-//				{
-//					manipulator1.goToPosition(i,150,0);
-//					usleep(50000);
-//				}
-//				for(int i = -100; i < 0; i+=10)
-//				{
-//					manipulator1.goToPosition(i,150,0);
-//					usleep(50000);
-//				}
-				
-
+				//get commands
 				while(commands.empty())
 				{
 					commands = json_get_commands(0);
 				}
+				
+				//execute commands
 				while(!commands.empty())
 				{
 					command = commands.front();
@@ -207,7 +170,7 @@ void *sendSensorData(void *ptr){
 		//send data
 		json_send_data(sensorData);
 		//clear map
-		sensorData.clear();
+		//sensorData.clear();
 	}
 	return NULL;
 }

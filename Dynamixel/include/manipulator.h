@@ -9,12 +9,13 @@
 #define IDLE_MODE	0
 #define FAILSAFE_MODE	1
 #define XSTART		0
-#define YSTART		0
-#define ZSTART		155+77
+#define YSTART		155
+#define ZSTART		77
 
 class Manipulator{
 public:	
-	Manipulator(int IDOne ,int IDTwo,int IDThree, int IDGrip_left, int IDGrip_right ) : one(IDOne, SERVOMODE), two(IDTwo, SERVOMODE), three(IDThree, SERVOMODE), 
+	Manipulator(int IDOne ,int IDTwo,int IDThree, int IDGrip_left, int IDGrip_right ) : 
+	one(IDOne, SERVOMODE), two(IDTwo, SERVOMODE), three(IDThree, SERVOMODE), 
 	grip_left(IDGrip_left, SERVOMODE), grip_right(IDGrip_right, SERVOMODE) {theta1 = 0; theta2 = 0; theta3 = 0; mode = IDLE_MODE;};
 	void goToPosition(int, int, int);
 	void setAngles(float, float, float);

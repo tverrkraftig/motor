@@ -26,6 +26,8 @@ int main(){
 
 	int deviceIndex = 0;
 	int baudnum = 1;
+
+	printf("-------LOCAL INTERFACE TEST PROGRAM-------\n");
 	
 	///////// Open USB2Dynamixel ////////////
 	if( dxl_initialize(deviceIndex, baudnum) == 0 )
@@ -41,7 +43,8 @@ int main(){
 	windowInit();
 	Car car1(FRONT_RIGHT_WHEEL, FRONT_LEFT_WHEEL, BACK_RIGHT_WHEEL, BACK_LEFT_WHEEL);
 	Manipulator manipulator1(MAN_ONE, MAN_TWO, MAN_THREE, GRIPPER_LEFT, GRIPPER_RIGHT);
-
+	sleep(1);
+	
 	manipulator1.goToPosition(XSTART,YSTART,ZSTART);
 	manipulator1.setGripper(0);
 	

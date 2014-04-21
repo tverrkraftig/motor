@@ -22,7 +22,7 @@ void Manipulator::goToPosition(int x, int y, int z){
 //		printf("invalid position!\n");
 //		return;
 //	}
-	
+
 	float s3, c3, l;
 	
 	l = sqrt(x*x+y*y);
@@ -37,7 +37,7 @@ void Manipulator::goToPosition(int x, int y, int z){
 }
 
 void Manipulator::setAngles(float t1, float t2, float t3){
-
+	
 	try{
 		int dummy;
 
@@ -92,9 +92,12 @@ void Manipulator::setAngles(float t1, float t2, float t3){
 	catch(MotorException e) {
 		printf("ID: %d lost\n",e.ID);
 		printError(e.status);
-		setMode(FAILSAFE_MODE);
-		printf("Manipulator lost!\n");
-		startPing();
+		if(mode == IDLE_MODE)
+		{
+			mode = FAILSAFE_MODE;
+			printf("Manipulator lost!\n");
+			startPing();
+		}
 	}
 }
 
@@ -133,9 +136,12 @@ void Manipulator::setGripper(bool on){
 	catch(MotorException e) {
 		printf("ID: %d lost\n",e.ID);
 		printError(e.status);
-		setMode(FAILSAFE_MODE);
-		printf("Manipulator lost!\n");
-		startPing();
+		if(mode == IDLE_MODE)
+		{
+			mode = FAILSAFE_MODE;
+			printf("Manipulator lost!\n");
+			startPing();
+		}
 	}
 }
 
@@ -159,9 +165,12 @@ void Manipulator::drawLine(int xstart, int ystart, int xend, int yend, int z){
 	catch(MotorException e) {
 		printf("ID: %d lost\n",e.ID);
 		printError(e.status);
-		setMode(FAILSAFE_MODE);
-		printf("Manipulator lost!\n");
-		startPing();
+		if(mode == IDLE_MODE)
+		{
+			mode = FAILSAFE_MODE;
+			printf("Manipulator lost!\n");
+			startPing();
+		}
 	}
 }
 
@@ -178,9 +187,13 @@ void Manipulator::drawCircle(int xcenter, int ycenter, int z, int radius, float 
 	catch(MotorException e) {
 		printf("ID: %d lost\n",e.ID);
 		printError(e.status);
-		setMode(FAILSAFE_MODE);
-		printf("Manipulator lost!\n");
-		startPing();
+		if(mode == IDLE_MODE)
+		{
+			mode = FAILSAFE_MODE;
+			printf("Manipulator lost!\n");
+			startPing();
+		}
+		
 	}
 }
 
@@ -205,7 +218,7 @@ void Manipulator::ping(){
 		if(count == 5){
 			printf("All manipulator motors active!\n");
 			printf("Returning to start position\n");
-			setMode(IDLE_MODE);
+			mode = IDLE_MODE;
 			goToPosition(XSTART,YSTART,ZSTART);
 			setGripper(0);
 			return;
@@ -214,6 +227,7 @@ void Manipulator::ping(){
 }
 
 void Manipulator::startPing(){
+	
 	pthread_create(&thread, NULL, Manipulator::staticEntryPoint, this);
 }
 

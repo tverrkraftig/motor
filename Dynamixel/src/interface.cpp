@@ -31,7 +31,6 @@ int yzero = 0;
  
 void windowInit()
 {
-    
     int s;
     /* open connection with the server */
     display = XOpenDisplay(NULL);
@@ -66,7 +65,7 @@ void checkEvent(Manipulator man, Car car){
 				ypos += event.xmotion.y - yzero;
 				xzero = event.xmotion.x;
 				yzero = event.xmotion.y;
-				printf("xpos: %d\t ypos: %d\n", xpos, ypos);
+				//printf("xpos: %d\t ypos: %d\n", xpos, ypos);
 				man.goToPosition(xpos,ypos,zpos);
 			}	
 			break;
