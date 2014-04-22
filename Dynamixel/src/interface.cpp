@@ -61,8 +61,8 @@ void checkEvent(Manipulator *man, Car *car){
         switch(event.type){
 		case MotionNotify:
 			if(button){
-				xpos += event.xmotion.x - xzero;
-				ypos += event.xmotion.y - yzero;
+				xpos -= event.xmotion.x - xzero;
+				ypos -= event.xmotion.y - yzero;
 				xzero = event.xmotion.x;
 				yzero = event.xmotion.y;
 				//printf("xpos: %d\t ypos: %d\n", xpos, ypos);
@@ -83,12 +83,12 @@ void checkEvent(Manipulator *man, Car *car){
 			}
 			if(event.xkey.keycode == MOUSE_WHEEL_FORWARD)
 			{
-				zpos+=10;
+				zpos-=10;
 				man->goToPosition(xpos,ypos,zpos);
 			}
 			if(event.xkey.keycode == MOUSE_WHEEL_BACKWARD)
 			{
-				zpos-=10;
+				zpos+=10;
 				man->goToPosition(xpos,ypos,zpos);
 			}
 			
