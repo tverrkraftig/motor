@@ -2,6 +2,7 @@
 #define MOTOR_H_
 
 #include <dynamixel.h>
+#include <pthread.h>
 
 // Control table address
 #define CW_ANGLE_LIMIT_L	6
@@ -27,6 +28,10 @@
 #define CW			1
 #define CCW			0
 
+#define IDLE_MODE		0
+#define FAILSAFE_MODE		1
+
+
 class MotorException{
 public:
 	MotorException(int theID, int theStatus) : ID(theID), status(theStatus){};
@@ -36,7 +41,7 @@ public:
 
 class Motor{
 public:
-	Motor(int, int);
+	Motor(int, int);	
 	int getMode();
 	int getPosition();
 	int getSpeed();

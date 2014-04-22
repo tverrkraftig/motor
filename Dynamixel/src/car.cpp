@@ -1,11 +1,14 @@
 #include "car.h"
 #include <stdio.h>
+#include <unistd.h>
+
+pthread_mutex_t mutex_car = PTHREAD_MUTEX_INITIALIZER;
 
 void Car::setSpeed(int theSpeed, bool dir){
 
-	if(mode == FAILSAFE_MODE)
+	if(getMode() == FAILSAFE_MODE)
 		return;
-
+	
 	try{
 		switch(turn)
 		{
@@ -37,19 +40,16 @@ void Car::setSpeed(int theSpeed, bool dir){
 	catch(MotorException e) {
 		printf("ID: %d lost\n",e.ID);
 		printError(e.status);
-		if(mode == IDLE_MODE)
-		{
-			mode = FAILSAFE_MODE;
-			printf("Wheels lost!\n");
-			startPing();
-		}
+		setMode(FAILSAFE_MODE);
+		printf("Wheels lost!\n");
+		startPing();
 	}
 	
 }
 
 void Car::turnCar(int theTurn){
 
-	if(mode == FAILSAFE_MODE)
+	if(getMode() == FAILSAFE_MODE)
 		return;
 
 	try{
@@ -77,34 +77,35 @@ void Car::turnCar(int theTurn){
 	catch(MotorException e) {
 		printf("ID: %d lost\n",e.ID);
 		printError(e.status);
-		if(mode == IDLE_MODE)
-		{
-			mode = FAILSAFE_MODE;
-			printf("Wheels lost!\n");
-			startPing();
-		}
+		setMode(FAILSAFE_MODE);
+		printf("Wheels lost!\n");
+		startPing();
 	}
 	
 }
 
 void Car::setMode(int theMode){
+	pthread_mutex_lock( &mutex_car );
 	mode = theMode;
+	pthread_mutex_unlock( &mutex_car );
 }
 
 int Car::getMode(){
-	return mode;
+	pthread_mutex_lock( &mutex_car );
+	int temp = mode;
+	pthread_mutex_unlock( &mutex_car );
+	return temp;
 }
 
 void Car::ping(){
 	printf("Ping Car\n");
 	while(1){
 		int count = 0;
-	
 		count += frontLeftWheel.ping();
 		count += backLeftWheel.ping();
 		count += frontRightWheel.ping();
 		count += backRightWheel.ping();
-		
+	
 		if(count == 4){
 			printf("All wheels active!\n");
 			setMode(IDLE_MODE);
@@ -114,7 +115,7 @@ void Car::ping(){
 }
 
 void Car::startPing(){
-	pthread_create(&thread, NULL, Car::staticEntryPoint, this);
+	pthread_create(&thread_car, NULL, Car::staticEntryPoint, this);
 }
 
 void * Car::staticEntryPoint(void * c)

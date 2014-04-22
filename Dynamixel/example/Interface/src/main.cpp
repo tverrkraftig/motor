@@ -51,7 +51,7 @@ int main(){
 		while(1)
 		{
 		
-			checkEvent(manipulator1, car1);
+			checkEvent(&manipulator1, &car1);
 
 		}
 

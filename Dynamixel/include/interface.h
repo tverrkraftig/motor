@@ -5,6 +5,6 @@
 #include "car.h"
 
 void windowInit();
-void checkEvent(Manipulator, Car);
+void checkEvent(Manipulator *, Car *);
 
 #endif

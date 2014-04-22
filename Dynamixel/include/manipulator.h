@@ -6,8 +6,6 @@
 
 #define PI 3.14159265
 
-#define IDLE_MODE	0
-#define FAILSAFE_MODE	1
 #define XSTART		0
 #define YSTART		155
 #define ZSTART		77

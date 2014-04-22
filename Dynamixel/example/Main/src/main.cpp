@@ -68,7 +68,7 @@ int main(){
 	vector <string> dummy = json_get_commands(0);
 
 	//create thread for sending sensor data
-	//pthread_create( &thread1, NULL, sendSensorData, &sensor1 );
+	pthread_create( &thread1, NULL, sendSensorData, &sensor1 );
 	
 		while(1)
 		{
@@ -148,7 +148,7 @@ void *sendSensorData(void *ptr){
 	map <string,double> sensorData;
 	while(1){
 		//sleep for 100ms
-		usleep(100000);
+		sleep(1);
 		
 		if(p->getMode() == FAILSAFE_MODE)
 		{
@@ -170,7 +170,7 @@ void *sendSensorData(void *ptr){
 		//send data
 		json_send_data(sensorData);
 		//clear map
-		//sensorData.clear();
+		sensorData.clear();
 	}
 	return NULL;
 }

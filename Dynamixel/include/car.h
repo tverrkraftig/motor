@@ -10,9 +10,6 @@
 
 #define TURN_MAGNITUDE	0.5f
 
-#define IDLE_MODE	0
-#define FAILSAFE_MODE	1
-
 class Car{
 
 public:
@@ -33,7 +30,7 @@ private:
 	Motor frontLeftWheel;
 	Motor backRightWheel;
 	Motor backLeftWheel;
-	pthread_t thread;
+	pthread_t thread_car;
 	static void * staticEntryPoint(void * c);
 	void ping();
 };

@@ -12,7 +12,9 @@ using namespace std;
 
 #define GRIPPER_LEFT_ZERO	511-140
 #define GRIPPER_RIGHT_ZERO	511+140
-#define MAX_COUNT		10
+#define MAX_COUNT		5
+
+pthread_mutex_t mutex_man = PTHREAD_MUTEX_INITIALIZER;
 
 void Manipulator::goToPosition(int x, int y, int z){
 
@@ -22,6 +24,9 @@ void Manipulator::goToPosition(int x, int y, int z){
 //		printf("invalid position!\n");
 //		return;
 //	}
+
+	if(getMode() == FAILSAFE_MODE)
+		return;
 
 	float s3, c3, l;
 	
@@ -38,9 +43,9 @@ void Manipulator::goToPosition(int x, int y, int z){
 
 void Manipulator::setAngles(float t1, float t2, float t3){
 
-	if(mode == FAILSAFE_MODE)
+	if(getMode() == FAILSAFE_MODE)
 		return;
-	
+
 	try{
 		int dummy;
 
@@ -95,18 +100,15 @@ void Manipulator::setAngles(float t1, float t2, float t3){
 	catch(MotorException e) {
 		printf("ID: %d lost\n",e.ID);
 		printError(e.status);
-		if(mode == IDLE_MODE)
-		{
-			mode = FAILSAFE_MODE;
-			printf("Manipulator lost!\n");
-			startPing();
-		}
+		setMode(FAILSAFE_MODE);
+		printf("Manipulator lost!\n");
+		startPing();
 	}
 }
 
 void Manipulator::setGripper(bool on){
 
-	if(mode == FAILSAFE_MODE)
+	if(getMode() == FAILSAFE_MODE)
 		return;
 
 	try{
@@ -136,24 +138,21 @@ void Manipulator::setGripper(bool on){
 				return;
 			lastPositionL = positionL;
 			lastPositionR = positionR;
-			usleep(1000);
+			usleep(10000);
 		}
 	}
 	catch(MotorException e) {
 		printf("ID: %d lost\n",e.ID);
 		printError(e.status);
-		if(mode == IDLE_MODE)
-		{
-			mode = FAILSAFE_MODE;
-			printf("Manipulator lost!\n");
-			startPing();
-		}
+		setMode(FAILSAFE_MODE);
+		printf("Manipulator lost!\n");
+		startPing();
 	}
 }
 
 void Manipulator::drawLine(int xstart, int ystart, int xend, int yend, int z){
 
-	if(mode == FAILSAFE_MODE)
+	if(getMode() == FAILSAFE_MODE)
 		return;
 
 	try{
@@ -175,18 +174,15 @@ void Manipulator::drawLine(int xstart, int ystart, int xend, int yend, int z){
 	catch(MotorException e) {
 		printf("ID: %d lost\n",e.ID);
 		printError(e.status);
-		if(mode == IDLE_MODE)
-		{
-			mode = FAILSAFE_MODE;
-			printf("Manipulator lost!\n");
-			startPing();
-		}
+		setMode(FAILSAFE_MODE);
+		printf("Manipulator lost!\n");
+		startPing();
 	}
 }
 
 void Manipulator::drawCircle(int xcenter, int ycenter, int z, int radius, float startAngle, float endAngle){
 
-	if(mode == FAILSAFE_MODE)
+	if(getMode() == FAILSAFE_MODE)
 		return;
 
 	try{
@@ -201,28 +197,29 @@ void Manipulator::drawCircle(int xcenter, int ycenter, int z, int radius, float 
 	catch(MotorException e) {
 		printf("ID: %d lost\n",e.ID);
 		printError(e.status);
-		if(mode == IDLE_MODE)
-		{
-			mode = FAILSAFE_MODE;
-			printf("Manipulator lost!\n");
-			startPing();
-		}
+		setMode(FAILSAFE_MODE);
+		printf("Manipulator lost!\n");
+		startPing();
 		
 	}
 }
 
 void Manipulator::setMode(int theMode){
+	pthread_mutex_lock( &mutex_man );
 	mode = theMode;
+	pthread_mutex_unlock( &mutex_man );
 }
 int Manipulator::getMode(){
-	return mode;
+	pthread_mutex_lock( &mutex_man );
+	int temp = mode;
+	pthread_mutex_unlock( &mutex_man );
+	return temp;
 }
 
 void Manipulator::ping(){
 	printf("Ping Manipulators\n");
 	while(1){
 		int count = 0;
-	
 		count += one.ping();
 		count += two.ping();
 		count += three.ping();
@@ -231,10 +228,10 @@ void Manipulator::ping(){
 
 		if(count == 5){
 			printf("All manipulator motors active!\n");
-			printf("Returning to start position\n");
-			mode = IDLE_MODE;
-			goToPosition(XSTART,YSTART,ZSTART);
-			setGripper(0);
+			setMode(IDLE_MODE);
+			//printf("Returning to start position\n");
+			//goToPosition(XSTART,YSTART,ZSTART);
+			//setGripper(0);
 			return;
 		}
 	}

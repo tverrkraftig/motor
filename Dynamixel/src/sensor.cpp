@@ -1,7 +1,8 @@
 #include "motor.h"
 #include "sensor.h"
-#include "dynamixel.h"
 #include "stdio.h"
+#include <unistd.h>
+#include "communication.h"
 
 Sensor::Sensor(int theID){
 	ID = theID;
@@ -11,8 +12,8 @@ Sensor::Sensor(int theID){
 
 int Sensor::getLight(int pos){
 		
-	int data = dxl_read_byte( ID, LIGHT_LEFT_DATA + pos );
-	commStatus = dxl_get_result();
+	int data = readByte( ID, LIGHT_LEFT_DATA + pos );
+	commStatus = getResult();
 	if(commStatus != COMM_RXSUCCESS)
 	{
 		mode = FAILSAFE_MODE;
@@ -23,8 +24,8 @@ int Sensor::getLight(int pos){
 
 int Sensor::getIR(int pos){
 		
-	int data = dxl_read_byte( ID, IR_LEFT_FIRE_DATA + pos );
-	commStatus = dxl_get_result();
+	int data = readByte( ID, IR_LEFT_FIRE_DATA + pos );
+	commStatus = getResult();
 	if(commStatus != COMM_RXSUCCESS)
 	{
 		mode = FAILSAFE_MODE;
@@ -41,15 +42,15 @@ void Sensor::playMelody(int song){
 		printf("invalid input\n");
 		return;
 	}
-	dxl_write_byte(ID, BUZZER_DATA_TIME, 255);
-	commStatus = dxl_get_result();
+	writeByte(ID, BUZZER_DATA_TIME, 255);
+	commStatus = getResult();
 	if(commStatus != COMM_RXSUCCESS)
 	{
 		mode = FAILSAFE_MODE;
 		printf("sensor lost\n");
 	}
-	dxl_write_byte(ID, BUZZER_DATA_NOTE, song);
-	commStatus = dxl_get_result();
+	writeByte(ID, BUZZER_DATA_NOTE, song);
+	commStatus = getResult();
 	if(commStatus != COMM_RXSUCCESS)
 	{
 		mode = FAILSAFE_MODE;
@@ -57,9 +58,34 @@ void Sensor::playMelody(int song){
 	}
 }
 
+void Sensor::playMelody(unsigned char* song, int length){
+
+	
+	
+	for(int i = 0; i<length; i+=2)
+	{
+
+		if(song[i+1] != 100)
+		{
+			writeByte(ID, BUZZER_DATA_TIME, 254);
+			writeByte(ID, BUZZER_DATA_NOTE, song[i+1]);
+			usleep(40000*song[i]);
+		}
+		else
+		{
+			writeByte(ID, BUZZER_DATA_TIME, 0);
+			usleep(40000*song[i]);
+		}
+			
+		
+	}
+	writeByte(ID, BUZZER_DATA_TIME, 0);
+	
+}
+
 void Sensor::ping(){
-	dxl_ping(ID);
-	commStatus = dxl_get_result();
+	pingID(ID);
+	commStatus = getResult();
 	if( commStatus == COMM_RXSUCCESS )
 	{
 		printf("Sensor ID: %d active!\n",ID);
