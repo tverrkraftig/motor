@@ -15,17 +15,25 @@
 using namespace std;
 
 //functions
-void json_post(char* url, char* json_string);
 void json_test_function();
+//example code that uses the four basic functions to communicate with the server
 
 void debug_print_map(map<string,double> mymap);
+// a debug function used to print maps received from the server
+
 void debug_print_vector(vector<string> myvector);
+//debug function used to print vectors
 
 
 void json_send_data(map<string,double> mymap);
-map<string,double> json_get_data(int id);
-void json_send_command(string cmd,int id);
-vector<string> json_get_commands(int id);
+// Uploads the provided map of sensor values to the server
 
-//void json_set_myID(int id);
-//int json_get_myID();
+map<string,double> json_get_data(int id);
+// Downloads sensor data from the server. The user must choose which agent (id) to receive from
+
+void json_send_command(string cmd,int id);
+// Uploads a command to the server. 
+//The agent with the corresponding id will download this command
+
+vector<string> json_get_commands(int id);
+//Download commands from the server. 

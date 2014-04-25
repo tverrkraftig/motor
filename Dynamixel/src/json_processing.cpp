@@ -362,11 +362,3 @@ void json_test_function(){
     printf("printing commands\n");
     debug_print_vector(json_get_commands(testID));
 }
-
-void json_set_myID(int id){
-    myID=id;
-}
-
-int json_get_myID(){
-    return myID;
-}
