@@ -41,6 +41,11 @@ int main(){
 	car1.setSpeed(1023,0);
 	sleep(2);
 	car1.setSpeed(0,1);
+	car1.turnCar(LEFT_TURN);
+	sleep(1);
+	car1.turnCar(RIGHT_TURN);
+	sleep(1);
+	car1.turnCar(NO_TURN);
 	
 		while(1)
 		{

@@ -36,12 +36,6 @@ int main(){
 	sleep(1);
 	
 	manipulator1.setGripper(0);
-
-	//test drawing
-//	manipulator1.setGripper(1);
-//	manipulator1.drawLine(50,200,50,150,0);
-//	manipulator1.drawLine(50,175,25,175,0);
-//	manipulator1.drawLine(25,200,25,150,0);
 	
 	while(1)
 	{
@@ -72,6 +66,10 @@ int main(){
 			manipulator1.goToPosition(i,170,0);
 			usleep(5000);
 		}
+
+		manipulator1.setGripper(1);
+		sleep(1);
+		manipulator1.setGripper(0);
 
 	}
 

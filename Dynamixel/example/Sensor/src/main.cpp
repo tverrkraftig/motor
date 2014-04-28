@@ -4,6 +4,7 @@
 #include <dynamixel.h>
 #include "sensor.h"
 #include "songs.h"
+#include "motor.h"
 
 
 using namespace std;
@@ -36,7 +37,17 @@ int main(){
 	
 	while(1)
 	{
+		data = sensor1.getIR(CENTER);
+		printf("\nIR center: %d\n",data);
+		
+		data = sensor1.getIR(LEFT);
+		printf("IR left: %d\n",data);
 
+		data = sensor.getIR(RIGHT);
+		printf("IR right: %d\n",data);
+
+		printf("\n");
+		usleep(100000);
 	}
 
 	// Close device
