@@ -43,7 +43,7 @@ int main(){
 			}
 				
 			else{
-				printf("motor1 to 30 degrees\n");
+				printf("motor1 to 0 degrees\n");
 				motor1.setGoalPosition(0);
 			}
 				

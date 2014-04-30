@@ -15,9 +15,9 @@ using namespace std;
 #define FRONT_LEFT_WHEEL	0
 #define BACK_LEFT_WHEEL		2
 
-#define MAN_ONE			4		//zero at 511
-#define MAN_TWO			7		//zero at 511, not allowed to go under
-#define MAN_THREE		5		//zero at 511
+#define MAN_ONE			4
+#define MAN_TWO			7
+#define MAN_THREE		5
 
 #define GRIPPER_LEFT		12
 #define GRIPPER_RIGHT		6

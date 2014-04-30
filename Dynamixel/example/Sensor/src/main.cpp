@@ -9,6 +9,7 @@
 
 using namespace std;
 
+//put ID of sensor here
 #define SENSOR		100
 
 int main(){
@@ -32,8 +33,6 @@ int main(){
 
 	Sensor sensor1(SENSOR);
 	sensor1.playMelody(FurElise,sizeof(FurElise));
-	//sensor1.playMelody(Sirene,sizeof(Sirene));
-	//sensor1.playMelody(6);
 	
 	while(1)
 	{

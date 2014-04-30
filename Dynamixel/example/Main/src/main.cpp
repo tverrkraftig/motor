@@ -20,9 +20,9 @@ using namespace std;
 #define BACK_LEFT_WHEEL		2
 
 //ID of manipulator arm
-#define MAN_ONE			4		//zero at 511
-#define MAN_TWO			7		//zero at 511, not allowed to go under
-#define MAN_THREE		5		//zero at 511
+#define MAN_ONE			4		
+#define MAN_TWO			7		
+#define MAN_THREE		5		
 
 //ID of gripper
 #define GRIPPER_LEFT		12
@@ -142,12 +142,11 @@ int main(){
 //thread function for continously sending data
 void *sendSensorData(void *ptr){
 
-	//initialize sensor here?
 	Sensor* p = (Sensor*)ptr;
 	int data;
 	map <string,double> sensorData;
 	while(1){
-		//sleep for 100ms
+		//sleep for 1s
 		sleep(1);
 		
 		if(p->getMode() == FAILSAFE_MODE)
@@ -167,8 +166,10 @@ void *sendSensorData(void *ptr){
 		data = p->getIR(RIGHT);
 		printf("IR right: %d\n",data);
 		sensorData["IR right"] = data;
+		
 		//send data
 		json_send_data(sensorData);
+		
 		//clear map
 		sensorData.clear();
 	}
